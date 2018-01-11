@@ -21,13 +21,27 @@ public class TrackContextVO {
      */
     private Long parentSpanId;
 
+    /**
+     * 本系统名称
+     */
+    private String sysName;
+
     public TrackContextVO() {
     }
 
-    public TrackContextVO(Long traceId, Long spanId, Long parentSpanId) {
+    public TrackContextVO(Long traceId, Long spanId, Long parentSpanId,String sysName) {
         this.traceId = traceId;
         this.spanId = spanId;
         this.parentSpanId = parentSpanId;
+        this.sysName=sysName;
+    }
+
+    public String getSysName() {
+        return sysName;
+    }
+
+    public void setSysName(String sysName) {
+        this.sysName = sysName;
     }
 
     public Long getTraceId() {

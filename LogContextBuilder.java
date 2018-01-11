@@ -10,6 +10,12 @@ public class LogContextBuilder {
 
     public static final Long INVALID_PARENT_SPAN_ID=-1L;
 
+    private String sysName;
+
+    public LogContextBuilder(String sysName){
+        this.sysName=sysName;
+    }
+
     /**
      * http Header中有traceId,说明是被调用的
      * @param request
@@ -19,7 +25,7 @@ public class LogContextBuilder {
         Long traceId=getValue(request.getHeader("traceId"));
         Long spanId=generateSapnId();
         Long parentSapnId=getValue(request.getHeader("parentSpanId"));
-        context.init(traceId,spanId,parentSapnId);
+        context.init(traceId,spanId,parentSapnId,sysName);
     }
 
     /**
@@ -32,7 +38,7 @@ public class LogContextBuilder {
         Long spanId=generateSapnId();
         Long parentSapnId=INVALID_PARENT_SPAN_ID;
         System.out.println(context);
-        context.init(traceId,spanId,parentSapnId);
+        context.init(traceId,spanId,parentSapnId,sysName);
     }
 
     private Long getValue(String str){

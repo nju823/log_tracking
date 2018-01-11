@@ -18,10 +18,10 @@ public class LogContext {
     /**
      * 每次调用独有的上下文
      */
-    private ThreadLocal<TrackContextVO> context=new ThreadLocal<>();
+    private static final ThreadLocal<TrackContextVO> context=new ThreadLocal<>();
 
-    public void init(Long traceId,Long spanId,Long parentSpanId){
-        TrackContextVO contextVO=new TrackContextVO(traceId,spanId,parentSpanId);
+    public void init(Long traceId,Long spanId,Long parentSpanId,String sysName){
+        TrackContextVO contextVO=new TrackContextVO(traceId,spanId,parentSpanId,sysName);
         context.set(contextVO);
     }
 
@@ -47,6 +47,10 @@ public class LogContext {
 
     public void setParentSpanId(Long parentSpanId) {
         context.get().setParentSpanId(parentSpanId);
+    }
+
+    public String getSysName(){
+        return context.get().getSysName();
     }
 
     public void print(){
