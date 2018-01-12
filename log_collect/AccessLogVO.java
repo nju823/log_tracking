@@ -1,4 +1,4 @@
-package nju.edu.cn.log.log_tracking;
+package nju.edu.cn.log.log_tracking.log_collect;
 
 /**
  * Created by cong on 2018-01-03.
@@ -51,6 +51,22 @@ public class AccessLogVO {
      */
     private String serviceName;
 
+    /**
+     * 当前时间戳
+     */
+    private Long currentMillis;
+
+    public AccessLogVO(){
+        currentMillis=System.currentTimeMillis();
+    }
+
+    public Long getCurrentMillis() {
+        return currentMillis;
+    }
+
+    public void setCurrentMillis(Long currentMillis) {
+        this.currentMillis = currentMillis;
+    }
 
     public int getType() {
         return type;

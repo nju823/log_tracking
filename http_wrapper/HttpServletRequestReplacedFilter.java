@@ -1,9 +1,6 @@
-package nju.edu.cn.log.log_tracking;
+package nju.edu.cn.log.log_tracking.http_wrapper;
 
-import org.springframework.core.annotation.Order;
-
-import java.io.BufferedReader;
-import java.io.IOException;  
+import java.io.IOException;
   
 import javax.servlet.Filter;  
 import javax.servlet.FilterChain;  
@@ -27,7 +24,7 @@ public class HttpServletRequestReplacedFilter implements Filter{
             throws IOException, ServletException {
          ServletRequest requestWrapper = null;  
          if(request instanceof HttpServletRequest) {  
-             requestWrapper = new BodyReaderHttpServletRequestWrapper((HttpServletRequest) request);    
+             requestWrapper = new BodyReaderHttpServletRequestWrapper((HttpServletRequest) request);
          }    
          if(null == requestWrapper) {  
             chain.doFilter(request, response);  

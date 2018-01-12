@@ -1,4 +1,4 @@
-package nju.edu.cn.log.log_tracking;
+package nju.edu.cn.log.log_tracking.log_collect;
 
 import org.springframework.util.StringUtils;
 

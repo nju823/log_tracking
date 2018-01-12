@@ -1,7 +1,8 @@
-package nju.edu.cn.log.log_tracking;
+package nju.edu.cn.log.log_tracking.log_collect;
 
 import com.alibaba.fastjson.JSONObject;
-import com.ts.util.JsonUtil;
+import nju.edu.cn.log.log_tracking.log_context.LogContext;
+import nju.edu.cn.log.log_tracking.log_context.LogContextBuilder;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
@@ -10,7 +11,6 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.stereotype.Component;
 
 /**
@@ -47,7 +47,7 @@ public class DatabaseLogAop {
 
         String dao=signature.getDeclaringType().getSimpleName();
 
-        saveDataBaseLog(signature.getName(),jsonObject.toString(),AccessTypeEnum.DATABASE_REQUEST,dao);
+        saveDataBaseLog(signature.getName(),jsonObject.toString(), AccessTypeEnum.DATABASE_REQUEST,dao);
     }
 
     @AfterReturning(value = "queryDatabase()",returning = "response")

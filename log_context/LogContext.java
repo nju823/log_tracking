@@ -1,11 +1,8 @@
-package nju.edu.cn.log.log_tracking;
+package nju.edu.cn.log.log_tracking.log_context;
 
 
 
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
-
-import java.util.Map;
 
 /**
  * Created by cong on 2018-01-03.

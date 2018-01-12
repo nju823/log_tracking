@@ -1,13 +1,11 @@
-package nju.edu.cn.log.log_tracking;
+package nju.edu.cn.log.log_tracking.log_collect;
 
 import com.alibaba.fastjson.JSONObject;
-import javafx.geometry.Pos;
-import org.bouncycastle.cert.ocsp.Req;
-import org.springframework.beans.factory.annotation.Autowired;
+import nju.edu.cn.log.log_tracking.http_wrapper.WrapperResponse;
+import nju.edu.cn.log.log_tracking.log_context.LogContext;
+import nju.edu.cn.log.log_tracking.log_context.LogContextBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Controller;
-import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,11 +15,12 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.lang.annotation.Annotation;
+import java.io.PrintWriter;
 import java.lang.reflect.Method;
 
 /**
@@ -46,31 +45,49 @@ public class AccessLogInteceptor implements HandlerInterceptor{
 
             AccessLogVO accessLogVO=new AccessLogVO();
             accessLogVO.setType(AccessTypeEnum.HTTP_REQUEST.getCode());
-            accessLogVO.setTraceId(logContext.getTraceId());
-            accessLogVO.setSpanId(logContext.getSpanId());
-            accessLogVO.setParentSpanId(logContext.getParentSpanId());
             accessLogVO.setServiceUrl(request.getRequestURL().toString());
             String controller=handlerMethod.getBeanType().getSimpleName();
             accessLogVO.setServiceName(buildServiceName(controller,getServicePath(handlerMethod)));
-            accessLogVO.setContent(readBody(request));
+            accessLogVO.setContent(readRequestBody(request));
             accessLogVO.setTarget(logContext.getSysName());
-
-            System.out.println(JSONObject.toJSONString(accessLogVO));
+            saveLog(accessLogVO);
         }else{
             builder.buildWithHeader(request,logContext);
         }
 
-
-
         return true;
     }
+
+
+
+    @Override
+    public void postHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o, ModelAndView modelAndView) throws Exception {
+
+    }
+
+    @Override
+    public void afterCompletion(HttpServletRequest httpServletRequest, HttpServletResponse response, Object o, Exception e) throws Exception {
+        AccessLogVO logVO=new AccessLogVO();
+        logVO.setType(AccessTypeEnum.HTTP_RESPONSE.getCode());
+
+        logVO.setContent(readResponseBody(response));
+        saveLog(logVO);
+    }
+
+    private void saveLog(AccessLogVO accessLogVO){
+        accessLogVO.setTraceId(logContext.getTraceId());
+        accessLogVO.setSpanId(logContext.getSpanId());
+        accessLogVO.setParentSpanId(logContext.getParentSpanId());
+        System.out.println(JSONObject.toJSONString(accessLogVO));
+    }
+
 
     /**
      * 读取http中的值
      * @param request
      * @return
      */
-    private String readBody(HttpServletRequest request) {
+    private String readRequestBody(HttpServletRequest request) {
         BufferedReader reader = null;
         StringBuilder builder=new StringBuilder();
         try {
@@ -84,6 +101,20 @@ public class AccessLogInteceptor implements HandlerInterceptor{
             e.printStackTrace();
         }
         return builder.toString();
+    }
+
+    /**
+     * 读取response的值
+     * @param response
+     * @return
+     * @throws Exception
+     */
+    private String readResponseBody(HttpServletResponse response) throws Exception{
+        WrapperResponse wrapperResponse=(WrapperResponse)response;
+        String content=new String(wrapperResponse.getContent());
+        PrintWriter out = response.getWriter();
+        out.write(content);
+        return content;
     }
 
     private String buildServiceName(String controller,String path){
@@ -117,16 +148,6 @@ public class AccessLogInteceptor implements HandlerInterceptor{
             return getMapping.value()[0];
 
         return "";
-    }
-
-    @Override
-    public void postHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o, ModelAndView modelAndView) throws Exception {
-
-    }
-
-    @Override
-    public void afterCompletion(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o, Exception e) throws Exception {
-
     }
 
 
