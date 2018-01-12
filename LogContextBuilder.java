@@ -37,7 +37,6 @@ public class LogContextBuilder {
         Long traceId=generateTraceId();
         Long spanId=generateSapnId();
         Long parentSapnId=INVALID_PARENT_SPAN_ID;
-        System.out.println(context);
         context.init(traceId,spanId,parentSapnId,sysName);
     }
 
