@@ -1,5 +1,6 @@
 package nju.edu.cn.log.log_tracking.log_collect;
 
+import com.ts.model.Paper;
 import org.springframework.util.StringUtils;
 
 /**
@@ -10,6 +11,8 @@ public class ServiceNameBuilder {
 
     private static final char SPLIT_CHARACTER='.';
 
+    private static final String PARAM_PATH="{param}";
+
     private StringBuilder builder=new StringBuilder();
 
     /**
@@ -19,7 +22,11 @@ public class ServiceNameBuilder {
     public ServiceNameBuilder append(String string){
         if(StringUtils.isEmpty(string))
             return this;
-        builder.append(string);
+        if(string.charAt(0)=='{'&&string.charAt(string.length()-1)=='}'){//路径中的参数
+            builder.append(PARAM_PATH);
+        }else{
+            builder.append(string);
+        }
         builder.append(SPLIT_CHARACTER);
         return this;
     }

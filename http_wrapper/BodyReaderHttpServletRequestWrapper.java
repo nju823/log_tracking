@@ -28,8 +28,15 @@ public class BodyReaderHttpServletRequestWrapper extends HttpServletRequestWrapp
     }    
     
     @Override    
-    public ServletInputStream getInputStream() throws IOException {    
-        final ByteArrayInputStream bais = new ByteArrayInputStream(body);    
+    public ServletInputStream getInputStream() throws IOException {
+
+        final ByteArrayInputStream bais ;
+        if(body!=null){
+            bais = new ByteArrayInputStream(body);
+        }else{
+            bais=new ByteArrayInputStream(new byte[1]);
+        }
+
         return new ServletInputStream() {
 
             @Override

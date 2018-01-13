@@ -100,7 +100,8 @@ public class AccessLogInteceptor implements HandlerInterceptor{
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return builder.toString();
+
+        return builder.toString().replace("\t","");
     }
 
     /**
@@ -119,11 +120,9 @@ public class AccessLogInteceptor implements HandlerInterceptor{
 
     private String buildServiceName(String controller,String path){
         ServiceNameBuilder builder=new ServiceNameBuilder();
-
         builder.append(logContext.getSysName());
         builder.append(controller);
         builder.append(path.split("/"));
-
         return builder.toString();
     }
 
