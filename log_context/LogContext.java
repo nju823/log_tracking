@@ -11,6 +11,11 @@ import org.springframework.stereotype.Service;
 @Service(value = "logContext")
 public class LogContext {
 
+    public static final String TRACE_ID_HEADER_KEY="traceId";
+
+    public static final String SPAN_ID_HEADER_KEY="spanId";
+
+    public static final String PARENT_SPAN_ID_HEADER_KEY="parentSpanId";
 
     /**
      * 每次调用独有的上下文

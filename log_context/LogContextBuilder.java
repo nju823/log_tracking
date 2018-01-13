@@ -2,6 +2,8 @@ package nju.edu.cn.log.log_tracking.log_context;
 
 import javax.servlet.http.HttpServletRequest;
 
+import static nju.edu.cn.log.log_tracking.log_context.LogContext.TRACE_ID_HEADER_KEY;
+
 /**
  * Created by cong on 2018-01-07.
  * 用http请求的信息初始化logcontexxt
@@ -22,9 +24,9 @@ public class LogContextBuilder {
      * @param context
      */
     public void buildWithHeader(HttpServletRequest request,LogContext context){
-        Long traceId=getValue(request.getHeader("traceId"));
+        Long traceId=getValue(request.getHeader(TRACE_ID_HEADER_KEY));
         Long spanId=generateSapnId();
-        Long parentSapnId=getValue(request.getHeader("parentSpanId"));
+        Long parentSapnId=getValue(request.getHeader(LogContext.PARENT_SPAN_ID_HEADER_KEY));
         context.init(traceId,spanId,parentSapnId,sysName);
     }
 

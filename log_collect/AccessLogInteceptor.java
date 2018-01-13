@@ -39,7 +39,7 @@ public class AccessLogInteceptor implements HandlerInterceptor{
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object o) throws Exception {
         LogContextBuilder builder=new LogContextBuilder(sysName);
-        if(StringUtils.isEmpty(request.getHeader("traceId"))){
+        if(StringUtils.isEmpty(request.getHeader(LogContext.TRACE_ID_HEADER_KEY))){
             builder.buildWithoutHeader(request,logContext);
             HandlerMethod handlerMethod=(HandlerMethod)o;
 
