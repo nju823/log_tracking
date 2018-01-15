@@ -15,6 +15,8 @@ public class ServiceNameBuilder {
 
     private StringBuilder builder=new StringBuilder();
 
+    private static final String SPLIT_URL="/";
+
     /**
      * 添加字符串
      * @param string
@@ -40,6 +42,11 @@ public class ServiceNameBuilder {
         for(String string:strings){
             append(string);
         }
+        return this;
+    }
+
+    public ServiceNameBuilder appendUrl(String url){
+        append(url.split(SPLIT_URL));
         return this;
     }
 

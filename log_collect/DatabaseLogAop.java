@@ -24,9 +24,7 @@ public class DatabaseLogAop {
     @Autowired
     private LogContext logContext;
 
-    private static final String PATH="execution(* com.ts.mapper..*.*(..))";
-
-    @Value("")
+    private static final String PATH="execution(* *..mapper.*Mapper.*(..))";
 
     @Pointcut(PATH)
     public void queryDatabase(){
@@ -68,7 +66,7 @@ public class DatabaseLogAop {
 
         accessLogVO.setType(type.getCode());
         accessLogVO.setContent(content);
-        accessLogVO.setParentSpanId(LogContextBuilder.INVALID_PARENT_SPAN_ID);
+        accessLogVO.setParentSpanId(LogContext.INVALID_PARENT_SPAN_ID);
         accessLogVO.setSpanId(logContext.getSpanId());
         accessLogVO.setTraceId(logContext.getTraceId());
 

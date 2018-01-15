@@ -10,8 +10,6 @@ import static nju.edu.cn.log.log_tracking.log_context.LogContext.TRACE_ID_HEADER
  */
 public class LogContextBuilder {
 
-    public static final Long INVALID_PARENT_SPAN_ID=-1L;
-
     private String sysName;
 
     public LogContextBuilder(String sysName){
@@ -38,7 +36,7 @@ public class LogContextBuilder {
     public void buildWithoutHeader(HttpServletRequest request,LogContext context){
         Long traceId=generateTraceId();
         Long spanId=generateSapnId();
-        Long parentSapnId=INVALID_PARENT_SPAN_ID;
+        Long parentSapnId=LogContext.INVALID_PARENT_SPAN_ID;
         context.init(traceId,spanId,parentSapnId,sysName);
     }
 

@@ -22,6 +22,11 @@ public class TrackContextVO {
     private Long parentSpanId;
 
     /**
+     * 下一级要调用的spanId
+     */
+    private Long nextSpanId;
+
+    /**
      * 本系统名称
      */
     private String sysName;
@@ -34,6 +39,14 @@ public class TrackContextVO {
         this.spanId = spanId;
         this.parentSpanId = parentSpanId;
         this.sysName=sysName;
+    }
+
+    public Long getNextSpanId() {
+        return nextSpanId;
+    }
+
+    public void setNextSpanId(Long nextSpanId) {
+        this.nextSpanId = nextSpanId;
     }
 
     public String getSysName() {

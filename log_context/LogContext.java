@@ -17,6 +17,8 @@ public class LogContext {
 
     public static final String PARENT_SPAN_ID_HEADER_KEY="parentSpanId";
 
+    public static final Long INVALID_PARENT_SPAN_ID=-1L;
+
     /**
      * 每次调用独有的上下文
      */
@@ -25,6 +27,22 @@ public class LogContext {
     public void init(Long traceId,Long spanId,Long parentSpanId,String sysName){
         TrackContextVO contextVO=new TrackContextVO(traceId,spanId,parentSpanId,sysName);
         context.set(contextVO);
+    }
+
+    /**
+     * 判断是否为调用链的第一个请求
+     * @return
+     */
+    public boolean isFirstRequest(){
+        return INVALID_PARENT_SPAN_ID.equals(getParentSpanId());
+    }
+
+    public Long getNextSpanId() {
+        return context.get().getNextSpanId();
+    }
+
+    public void setNextSpanId(Long nextSpanId) {
+        context.get().setNextSpanId(nextSpanId);
     }
 
     public Long getTraceId() {

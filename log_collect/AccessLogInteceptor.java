@@ -46,8 +46,7 @@ public class AccessLogInteceptor implements HandlerInterceptor{
             AccessLogVO accessLogVO=new AccessLogVO();
             accessLogVO.setType(AccessTypeEnum.HTTP_REQUEST.getCode());
             accessLogVO.setServiceUrl(request.getRequestURL().toString());
-            String controller=handlerMethod.getBeanType().getSimpleName();
-            accessLogVO.setServiceName(buildServiceName(controller,getServicePath(handlerMethod)));
+            accessLogVO.setServiceName(buildServiceName(getServicePath(handlerMethod)));
             accessLogVO.setContent(readRequestBody(request));
             accessLogVO.setTarget(logContext.getSysName());
             saveLog(accessLogVO);
@@ -67,9 +66,10 @@ public class AccessLogInteceptor implements HandlerInterceptor{
 
     @Override
     public void afterCompletion(HttpServletRequest httpServletRequest, HttpServletResponse response, Object o, Exception e) throws Exception {
+        if(!logContext.isFirstRequest())
+            return;
         AccessLogVO logVO=new AccessLogVO();
         logVO.setType(AccessTypeEnum.HTTP_RESPONSE.getCode());
-
         logVO.setContent(readResponseBody(response));
         saveLog(logVO);
     }
@@ -118,11 +118,10 @@ public class AccessLogInteceptor implements HandlerInterceptor{
         return content;
     }
 
-    private String buildServiceName(String controller,String path){
+    private String buildServiceName(String path){
         ServiceNameBuilder builder=new ServiceNameBuilder();
         builder.append(logContext.getSysName());
-        builder.append(controller);
-        builder.append(path.split("/"));
+        builder.appendUrl(path);
         return builder.toString();
     }
 

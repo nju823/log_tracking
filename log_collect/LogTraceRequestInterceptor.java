@@ -13,10 +13,8 @@ public class LogTraceRequestInterceptor implements RequestInterceptor {
 
     @Override
     public void apply(RequestTemplate requestTemplate) {
-        System.out.println("adding header,logContext:");
-        logContext.print();
         requestTemplate.header(LogContext.TRACE_ID_HEADER_KEY, logContext.getTraceId()+"");
         requestTemplate.header(LogContext.PARENT_SPAN_ID_HEADER_KEY,logContext.getSpanId()+"");
-        //TODO 生成spanId
+        requestTemplate.header(LogContext.SPAN_ID_HEADER_KEY,logContext.getNextSpanId()+"");
     }
 }
