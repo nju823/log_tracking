@@ -2,8 +2,10 @@ package nju.edu.cn.log.log_tracking.log_collect;
 
 import com.alibaba.fastjson.JSONObject;
 import nju.edu.cn.log.log_tracking.http_wrapper.WrapperResponse;
+import nju.edu.cn.log.log_tracking.id_generate.IdGetter;
 import nju.edu.cn.log.log_tracking.log_context.LogContext;
 import nju.edu.cn.log.log_tracking.log_context.LogContextBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;

@@ -1,5 +1,7 @@
 package nju.edu.cn.log.log_tracking.log_context;
 
+import nju.edu.cn.log.log_tracking.id_generate.IdGetter;
+
 import javax.servlet.http.HttpServletRequest;
 
 import static nju.edu.cn.log.log_tracking.log_context.LogContext.TRACE_ID_HEADER_KEY;
@@ -51,11 +53,13 @@ public class LogContextBuilder {
     }
 
     private Long generateSapnId(){
-        return 10L;
+        IdGetter idGetter=new IdGetter();
+        return idGetter.nextSpanId();
     }
 
     private Long generateTraceId(){
-        return 100L;
+        IdGetter idGetter=new IdGetter();
+        return idGetter.nextTraceId();
     }
 
 }

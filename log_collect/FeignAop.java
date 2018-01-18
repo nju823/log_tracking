@@ -1,7 +1,9 @@
 package nju.edu.cn.log.log_tracking.log_collect;
 
 import com.alibaba.fastjson.JSONObject;
-import nju.edu.cn.log.log_tracking.id_generate.IdGenerator;
+import com.netflix.discovery.converters.Auto;
+import nju.edu.cn.log.log_tracking.id_generate.IdGetter;
+import nju.edu.cn.log.log_tracking.zookeeper.IdGenerator;
 import nju.edu.cn.log.log_tracking.log_context.LogContext;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.*;
@@ -13,7 +15,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.method.HandlerMethod;
 
 import java.lang.reflect.Method;
 
@@ -31,6 +32,9 @@ public class FeignAop{
 
     @Value("${spring.application.name}")
     private String sysName;
+
+    @Autowired
+    private IdGetter idGetter;
 
     @Pointcut("execution(* *..outter_service.*.*(..))")
     public void feignRequest(){
@@ -59,7 +63,7 @@ public class FeignAop{
         accessLogVO.setServiceName(builder.toString());
         accessLogVO.setSource(sysName);
         accessLogVO.setTarget(client.value());
-        Long spanId= IdGenerator.generateSpanId();
+        Long spanId= idGetter.nextSpanId();
         logContext.setNextSpanId(spanId);
 
         saveLog(accessLogVO,jsonObject.toString(),AccessTypeEnum.HTTP_REQUEST);
