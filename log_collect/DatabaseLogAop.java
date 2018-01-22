@@ -3,6 +3,7 @@ package nju.edu.cn.log.log_tracking.log_collect;
 import com.alibaba.fastjson.JSONObject;
 import nju.edu.cn.log.log_tracking.log_context.LogContext;
 import nju.edu.cn.log.log_tracking.log_context.LogContextBuilder;
+import nju.edu.cn.log.log_tracking.send_log.LogkafkaProducer;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
@@ -23,6 +24,9 @@ public class DatabaseLogAop {
 
     @Autowired
     private LogContext logContext;
+
+    @Autowired
+    private LogkafkaProducer logSender;
 
     private static final String PATH="execution(* *..mapper.*Mapper.*(..))";
 
@@ -76,7 +80,7 @@ public class DatabaseLogAop {
         accessLogVO.setServiceName(serviceName);
         accessLogVO.setServiceUrl(serviceName);
 
-        System.out.println(JSONObject.toJSONString(accessLogVO));
+        logSender.send(accessLogVO);
     }
 
 

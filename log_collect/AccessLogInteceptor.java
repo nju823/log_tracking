@@ -5,6 +5,7 @@ import nju.edu.cn.log.log_tracking.http_wrapper.WrapperResponse;
 import nju.edu.cn.log.log_tracking.id_generate.IdGetter;
 import nju.edu.cn.log.log_tracking.log_context.LogContext;
 import nju.edu.cn.log.log_tracking.log_context.LogContextBuilder;
+import nju.edu.cn.log.log_tracking.send_log.LogkafkaProducer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -37,6 +38,9 @@ public class AccessLogInteceptor implements HandlerInterceptor{
 
     @Value("${spring.application.name}")
     private String sysName;
+
+    @Autowired
+    private LogkafkaProducer logSender;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object o) throws Exception {
@@ -80,7 +84,7 @@ public class AccessLogInteceptor implements HandlerInterceptor{
         accessLogVO.setTraceId(logContext.getTraceId());
         accessLogVO.setSpanId(logContext.getSpanId());
         accessLogVO.setParentSpanId(logContext.getParentSpanId());
-        System.out.println(JSONObject.toJSONString(accessLogVO));
+        logSender.send(accessLogVO);
     }
 
 

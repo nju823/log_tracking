@@ -3,6 +3,7 @@ package nju.edu.cn.log.log_tracking.log_collect;
 import com.alibaba.fastjson.JSONObject;
 import com.netflix.discovery.converters.Auto;
 import nju.edu.cn.log.log_tracking.id_generate.IdGetter;
+import nju.edu.cn.log.log_tracking.send_log.LogkafkaProducer;
 import nju.edu.cn.log.log_tracking.zookeeper.IdGenerator;
 import nju.edu.cn.log.log_tracking.log_context.LogContext;
 import org.aspectj.lang.JoinPoint;
@@ -35,6 +36,9 @@ public class FeignAop{
 
     @Autowired
     private IdGetter idGetter;
+
+    @Autowired
+    private LogkafkaProducer logSender;
 
     @Pointcut("execution(* *..outter_service.*.*(..))")
     public void feignRequest(){
@@ -81,7 +85,7 @@ public class FeignAop{
         accessLogVO.setParentSpanId(logContext.getSpanId());
         accessLogVO.setTraceId(logContext.getTraceId());
         accessLogVO.setContent(content);
-        System.out.println(JSONObject.toJSONString(accessLogVO));
+        logSender.send(accessLogVO);
     }
 
 
