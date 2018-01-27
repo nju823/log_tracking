@@ -72,11 +72,12 @@ public class AccessLogInteceptor implements HandlerInterceptor{
 
     @Override
     public void afterCompletion(HttpServletRequest httpServletRequest, HttpServletResponse response, Object o, Exception e) throws Exception {
-        if(!logContext.isFirstRequest())
+        String body=readResponseBody(response);
+        if(!logContext.isFirstRequest()||logContext.isException())
             return;
         AccessLogVO logVO=new AccessLogVO();
         logVO.setType(AccessTypeEnum.HTTP_RESPONSE.getCode());
-        logVO.setContent(readResponseBody(response));
+        logVO.setContent(body);
         saveLog(logVO);
     }
 

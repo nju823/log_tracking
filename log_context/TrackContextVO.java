@@ -31,6 +31,11 @@ public class TrackContextVO {
      */
     private String sysName;
 
+    /**
+     * 是否异常
+     */
+    private boolean isException;
+
     public TrackContextVO() {
     }
 
@@ -39,6 +44,14 @@ public class TrackContextVO {
         this.spanId = spanId;
         this.parentSpanId = parentSpanId;
         this.sysName=sysName;
+    }
+
+    public boolean isException() {
+        return isException;
+    }
+
+    public void setException(boolean exception) {
+        isException = exception;
     }
 
     public Long getNextSpanId() {

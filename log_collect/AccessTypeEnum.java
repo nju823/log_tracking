@@ -9,7 +9,8 @@ public enum AccessTypeEnum {
     HTTP_REQUEST("http请求",1),
     HTTP_RESPONSE("http响应",2),
     DATABASE_REQUEST("数据库请求",3),
-    DATABASE_RESPONSE("数据库响应",4);
+    DATABASE_RESPONSE("数据库响应",4),
+    EXCEPTION("异常",5);
 
 
     AccessTypeEnum(String desc,int code){

@@ -37,6 +37,14 @@ public class LogContext {
         return INVALID_PARENT_SPAN_ID.equals(getParentSpanId());
     }
 
+    public boolean isException() {
+        return context.get().isException();
+    }
+
+    public void setException(boolean exception) {
+        context.get().setException(exception);
+    }
+
     public Long getNextSpanId() {
         return context.get().getNextSpanId();
     }
