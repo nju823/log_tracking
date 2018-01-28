@@ -29,6 +29,14 @@ public class LogContext {
         context.set(contextVO);
     }
 
+    public TrackContextVO getContextCopy(){
+        return new TrackContextVO(context.get());
+    }
+
+    public void setContext(TrackContextVO contextVO){
+        context.set(new TrackContextVO(contextVO));
+    }
+
     /**
      * 判断是否为调用链的第一个请求
      * @return

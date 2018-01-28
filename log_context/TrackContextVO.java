@@ -1,5 +1,7 @@
 package nju.edu.cn.log.log_tracking.log_context;
 
+import org.springframework.beans.BeanUtils;
+
 /**
  * Created by cong on 2018-01-03.
  * 定义标识一次调用的id信息
@@ -44,6 +46,10 @@ public class TrackContextVO {
         this.spanId = spanId;
         this.parentSpanId = parentSpanId;
         this.sysName=sysName;
+    }
+
+    public TrackContextVO(TrackContextVO copy){
+        BeanUtils.copyProperties(copy,this);
     }
 
     public boolean isException() {
