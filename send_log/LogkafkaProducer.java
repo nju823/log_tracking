@@ -21,7 +21,7 @@ public class LogkafkaProducer{
     /**
      * 推送消息线程池
      */
-    private static final Executor KAFKA_THREAD_POOL= Executors.newCachedThreadPool();
+    private static final Executor KAFKA_THREAD_POOL= Executors.newFixedThreadPool(20);
         
     @Autowired
     private Producer<String,String> producer;

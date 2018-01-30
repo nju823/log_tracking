@@ -1,6 +1,9 @@
 package nju.edu.cn.log.log_tracking.log_context;
 
 import nju.edu.cn.log.log_tracking.id_generate.IdGetter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -10,13 +13,14 @@ import static nju.edu.cn.log.log_tracking.log_context.LogContext.TRACE_ID_HEADER
  * Created by cong on 2018-01-07.
  * 用http请求的信息初始化logcontexxt
  */
+@Component
 public class LogContextBuilder {
 
+    @Value("${spring.application.name}")
     private String sysName;
 
-    public LogContextBuilder(String sysName){
-        this.sysName=sysName;
-    }
+    @Autowired
+    private IdGetter idGetter;
 
     /**
      * http Header中有traceId,说明是被调用的
@@ -53,12 +57,10 @@ public class LogContextBuilder {
     }
 
     private Long generateSapnId(){
-        IdGetter idGetter=new IdGetter();
         return idGetter.nextSpanId();
     }
 
     private Long generateTraceId(){
-        IdGetter idGetter=new IdGetter();
         return idGetter.nextTraceId();
     }
 

@@ -1,11 +1,13 @@
 package nju.edu.cn.log.log_tracking.id_generate;
 
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 /**
  * Created by cong on 2018-01-18.
  */
 @Component
+@Scope("singleton")
 public class IdGetter {
 
     private IdGenerator idGenerator;
@@ -19,6 +21,7 @@ public class IdGetter {
                 .addHost("112.74.176.249", 6379,
                         "c5809078fa6d652e0b0232d552a9d06d37fe819c")
                 .build();
+        System.out.println("------------init-----------------");
     }
 
     /**

@@ -42,9 +42,12 @@ public class AccessLogInteceptor implements HandlerInterceptor{
     @Autowired
     private LogkafkaProducer logSender;
 
+    @Autowired
+    private LogContextBuilder builder;
+
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object o) throws Exception {
-        LogContextBuilder builder=new LogContextBuilder(sysName);
+
         if(StringUtils.isEmpty(request.getHeader(LogContext.TRACE_ID_HEADER_KEY))){
             builder.buildWithoutHeader(request,logContext);
             HandlerMethod handlerMethod=(HandlerMethod)o;
