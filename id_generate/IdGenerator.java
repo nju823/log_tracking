@@ -7,53 +7,25 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.exceptions.JedisConnectionException;
 
+@Component
 public class IdGenerator {
 
-	static final Logger logger = LoggerFactory.getLogger(IdGenerator.class);
-	/**
-	 * JedisPool, luaSha
-	 */
-	List<Pair<JedisPool, String>> jedisPoolList;
-	int retryTimes;
+	@Value("${log.redis.evalsha}")
+	private String evalsha;
 
-	int index = 0;
+	@Value("${log.redis.retry.time}")
+	private int retryTimes;
 
-	private IdGenerator() {
+	@Autowired
+	private RedisUtil redisUtil;
 
-	}
-
-	private IdGenerator(List<Pair<JedisPool, String>> jedisPoolList,
-			int retryTimes) {
-		this.jedisPoolList = jedisPoolList;
-		this.retryTimes = retryTimes;
-	}
-
-	static public IdGeneratorBuilder builder() {
-		return new IdGeneratorBuilder();
-	}
-
-	static class IdGeneratorBuilder {
-		List<Pair<JedisPool, String>> jedisPoolList = new ArrayList();
-		int retryTimes = 5;
-
-		public IdGeneratorBuilder addHost(String host, int port, String luaSha) {
-			jedisPoolList.add(Pair.of(new JedisPool(host, port), luaSha));
-			return this;
-		}
-
-		public IdGeneratorBuilder retryTimes(int retryTimes) {
-			this.retryTimes = retryTimes;
-			return this;
-		}
-
-		public IdGenerator build() {
-			return new IdGenerator(jedisPoolList, retryTimes);
-		}
-	}
 
 	public long next(String tab) {
 		return next(tab, 0);
@@ -70,32 +42,10 @@ public class IdGenerator {
 	}
 
 	Long innerNext(String tab, long shardId) {
-		index++;
-		Pair<JedisPool, String> pair = jedisPoolList.get(index
-				% jedisPoolList.size());
-		JedisPool jedisPool = pair.getLeft();
-
-		String luaSha = pair.getRight();
-		Jedis jedis = null;
-		try {
-			jedis = jedisPool.getResource();
-			jedis.auth("congye6");
-			List<Long> result = (List<Long>) jedis.evalsha(luaSha, 2, tab, ""
-					+ shardId);
-			long id = buildId(result.get(0), result.get(1), result.get(2),
-					result.get(3));
-			return id;
-		} catch (JedisConnectionException e) {
-			if (jedis != null) {
-				jedisPool.returnBrokenResource(jedis);
-			}
-			logger.error("generate id error!", e);
-		} finally {
-			if (jedis != null) {
-				jedisPool.returnResource(jedis);
-			}
-		}
-		return null;
+		List<Long> result = (List<Long>) redisUtil.evalsha(evalsha, 2, tab, "" + shardId);
+		long id = buildId(result.get(0), result.get(1), result.get(2),
+				result.get(3));
+		return id;
 	}
 
 	public static long buildId(long second, long microSecond, long shardId,

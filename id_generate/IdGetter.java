@@ -1,5 +1,6 @@
 package nju.edu.cn.log.log_tracking.id_generate;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -10,19 +11,12 @@ import org.springframework.stereotype.Component;
 @Scope("singleton")
 public class IdGetter {
 
+    @Autowired
     private IdGenerator idGenerator;
 
     private static final String TRACE_ID_TAB="trace_id";
 
     private static final String SPAN_ID_TAB="span_id";
-
-    public IdGetter(){
-        idGenerator = IdGenerator.builder()
-                .addHost("112.74.176.249", 6379,
-                        "c5809078fa6d652e0b0232d552a9d06d37fe819c")
-                .build();
-        System.out.println("------------init-----------------");
-    }
 
     /**
      * 获取下一个traceId
