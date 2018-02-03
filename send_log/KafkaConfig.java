@@ -47,8 +47,8 @@ public class KafkaConfig {
         // 异步提交的时候(async)，并发提交的记录数
         props.put("batch.num.messages", "200");
 
-        // 设置缓冲区大小，默认10KB
-        props.put("send.buffer.bytes", "102400");
+        // 设置缓冲区大小，200KB
+        props.put("send.buffer.bytes", "2048000");
         return props;
     }
 
