@@ -22,9 +22,10 @@ public class LogkafkaProducer{
      * 推送消息线程池
      */
     private static final Executor KAFKA_THREAD_POOL= Executors.newFixedThreadPool(20);
-        
+
     @Autowired
-    private Producer<String,String> producer;
+    private KafkaProducerPool kafkaProducerPool;
+
 
     /**
      * 将访问日志推送到kafka
@@ -33,7 +34,7 @@ public class LogkafkaProducer{
     public void send(AccessLogVO accessLog){
         KeyedMessage<String,String> keyedMessage=
                 new KeyedMessage<>(ACCESS_LOG_TOPIC,accessLog.getTraceId()+"", JSONObject.toJSONString(accessLog));
-        KAFKA_THREAD_POOL.execute(new SendMessageTask(producer,keyedMessage));
+        KAFKA_THREAD_POOL.execute(new SendMessageTask(keyedMessage,kafkaProducerPool));
     }
 
          

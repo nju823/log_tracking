@@ -15,20 +15,14 @@ import java.util.Properties;
 /**
  * Created by cong on 2018-01-22.
  */
-@Configuration
-public class KafkaConfig {
+public class KafkaProperties {
 
-    @Bean
-    public Producer<String,String> getProducer(){
-        return new Producer<>(new ProducerConfig(buildProperty()));
-    }
+    private static final String zookeeperHost="120.79.201.3:4181,39.107.107.237:4181,120.79.201.107:4181";
 
-    private String zookeeperHost="120.79.201.3:4181,39.107.107.237:4181,120.79.201.107:4181";
-
-    private String kafkaHost="120.79.9.49:9092";
+    private static final String kafkaHost="120.79.9.49:9092";
 
 
-    public Properties buildProperty(){
+    public static Properties buildProperty(){
         Properties props = new Properties();
         props.put("zookeeper.connect", zookeeperHost);//声明zk
         props.put("serializer.class", StringEncoder.class.getName());
