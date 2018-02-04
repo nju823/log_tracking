@@ -45,6 +45,9 @@ public class AccessLogInteceptor implements HandlerInterceptor{
     @Autowired
     private LogContextBuilder builder;
 
+    @Autowired
+    private LogSelector logSelector;
+
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object o) throws Exception {
 
@@ -56,7 +59,9 @@ public class AccessLogInteceptor implements HandlerInterceptor{
             accessLogVO.setType(AccessTypeEnum.HTTP_REQUEST.getCode());
             accessLogVO.setServiceUrl(request.getRequestURL().toString());
             accessLogVO.setServiceName(buildServiceName(getServicePath(handlerMethod)));
-            accessLogVO.setContent(readRequestBody(request));
+            if(logSelector.logContent()){
+                accessLogVO.setContent(readRequestBody(request));
+            }
             accessLogVO.setTarget(logContext.getSysName());
             saveLog(accessLogVO);
         }else{
@@ -80,7 +85,9 @@ public class AccessLogInteceptor implements HandlerInterceptor{
             return;
         AccessLogVO logVO=new AccessLogVO();
         logVO.setType(AccessTypeEnum.HTTP_RESPONSE.getCode());
-        logVO.setContent(body);
+        if(logSelector.logContent()){
+            logVO.setContent(body);
+        }
         saveLog(logVO);
     }
 

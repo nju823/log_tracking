@@ -40,6 +40,9 @@ public class FeignAop{
     @Autowired
     private LogkafkaProducer logSender;
 
+    @Autowired
+    private LogSelector logSelector;
+
     @Pointcut("execution(* *..outter_service.*.*(..))")
     public void feignRequest(){
 
@@ -84,7 +87,9 @@ public class FeignAop{
         accessLogVO.setSpanId(logContext.getNextSpanId());
         accessLogVO.setParentSpanId(logContext.getSpanId());
         accessLogVO.setTraceId(logContext.getTraceId());
-        accessLogVO.setContent(content);
+        if(logSelector.logContent()){
+            accessLogVO.setContent(content);
+        }
         logSender.send(accessLogVO);
     }
 

@@ -28,6 +28,9 @@ public class DatabaseLogAop {
     @Autowired
     private LogkafkaProducer logSender;
 
+    @Autowired
+    private LogSelector logSelector;
+
     private static final String PATH="execution(* *..mapper.*Mapper.*(..))";
 
     @Pointcut(PATH)
@@ -69,7 +72,9 @@ public class DatabaseLogAop {
         AccessLogVO accessLogVO=new AccessLogVO();
 
         accessLogVO.setType(type.getCode());
-        accessLogVO.setContent(content);
+        if(logSelector.logContent()){
+            accessLogVO.setContent(content);
+        }
         accessLogVO.setParentSpanId(LogContext.INVALID_PARENT_SPAN_ID);
         accessLogVO.setSpanId(logContext.getSpanId());
         accessLogVO.setTraceId(logContext.getTraceId());
