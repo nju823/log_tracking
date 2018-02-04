@@ -45,10 +45,10 @@ public class KafkaConfig {
         props.put("message.send.max.retries", "3");
 
         // 异步提交的时候(async)，并发提交的记录数
-        props.put("batch.num.messages", "200");
+        props.put("batch.num.messages", "1000");
 
-        // 设置缓冲区大小，200KB
-        props.put("send.buffer.bytes", "2048000");
+        // 设置缓冲区大小，2000KB
+        props.put("send.buffer.bytes", "20480000");
         return props;
     }
 
