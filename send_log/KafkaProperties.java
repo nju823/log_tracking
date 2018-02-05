@@ -44,8 +44,8 @@ public class KafkaProperties {
         //压缩
         props.put("compression.codec","snappy");
 
-        // 设置缓冲区大小，2000KB
-        props.put("send.buffer.bytes", "20480000");
+        // 设置缓冲区大小，10mb
+        props.put("send.buffer.bytes", "102400000");
         return props;
     }
 
