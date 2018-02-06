@@ -1,6 +1,7 @@
 package nju.edu.cn.log.log_tracking.log_collect;
 
 import com.alibaba.fastjson.JSONObject;
+import nju.edu.cn.log.log_tracking.id_generate.IdGetter;
 import nju.edu.cn.log.log_tracking.log_context.LogContext;
 import nju.edu.cn.log.log_tracking.log_context.LogContextBuilder;
 import nju.edu.cn.log.log_tracking.send_log.LogkafkaProducer;
@@ -31,6 +32,9 @@ public class DatabaseLogAop {
     @Autowired
     private LogSelector logSelector;
 
+    @Autowired
+    private IdGetter idGetter;
+
     private static final String PATH="execution(* *..mapper.*Mapper.*(..))";
 
     @Pointcut(PATH)
@@ -52,6 +56,7 @@ public class DatabaseLogAop {
 
         String dao=signature.getDeclaringType().getSimpleName();
 
+        logContext.setNextSpanId(idGetter.nextSpanId());
         saveDataBaseLog(signature.getName(),jsonObject.toString(), AccessTypeEnum.DATABASE_REQUEST,dao);
     }
 
@@ -75,15 +80,15 @@ public class DatabaseLogAop {
         if(logSelector.logContent()){
             accessLogVO.setContent(content);
         }
-        accessLogVO.setParentSpanId(LogContext.INVALID_PARENT_SPAN_ID);
-        accessLogVO.setSpanId(logContext.getSpanId());
+        accessLogVO.setParentSpanId(logContext.getSpanId());
+        accessLogVO.setSpanId(logContext.getNextSpanId());
         accessLogVO.setTraceId(logContext.getTraceId());
-
+        accessLogVO.setSource(logContext.getSysName());
+        accessLogVO.setTarget(logContext.getSysName()+"_db");
         ServiceNameBuilder builder=new ServiceNameBuilder();
         builder.append(logContext.getSysName()).append(dao).append(serviceName);
         serviceName=builder.toString();
         accessLogVO.setServiceName(serviceName);
-        accessLogVO.setServiceUrl(serviceName);
 
         logSender.send(accessLogVO);
     }
