@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 
+import static nju.edu.cn.log.log_tracking.log_context.LogContext.SPAN_ID_HEADER_KEY;
 import static nju.edu.cn.log.log_tracking.log_context.LogContext.TRACE_ID_HEADER_KEY;
 
 /**
@@ -29,7 +30,7 @@ public class LogContextBuilder {
      */
     public void buildWithHeader(HttpServletRequest request,LogContext context){
         Long traceId=getValue(request.getHeader(TRACE_ID_HEADER_KEY));
-        Long spanId=generateSapnId();
+        Long spanId=getValue(request.getHeader(SPAN_ID_HEADER_KEY));
         Long parentSapnId=getValue(request.getHeader(LogContext.PARENT_SPAN_ID_HEADER_KEY));
         context.init(traceId,spanId,parentSapnId,sysName);
     }
