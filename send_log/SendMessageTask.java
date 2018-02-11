@@ -22,5 +22,6 @@ class SendMessageTask implements Runnable{
     @Override
     public void run() {
         producerPool.send(keyedMessage);
+//        System.out.println(keyedMessage.message());
     }
 }

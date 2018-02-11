@@ -36,4 +36,19 @@ public class RedisUtil {
         return result;
     }
 
+    /**
+     * 将key对应的long值递增，如果不存在则置为0
+     * @param key
+     * @return
+     */
+    public Long increment(String key){
+        Long result = redisTemplate.execute(new RedisCallback<Long>() {
+            public Long doInRedis(RedisConnection connection) {
+                Jedis jedis = (Jedis) connection.getNativeConnection();
+                return jedis.incr(key);
+            }
+        }, true);
+        return result;
+    }
+
 }

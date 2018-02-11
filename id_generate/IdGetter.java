@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 public class IdGetter {
 
     @Autowired
-    private IdGenerator idGenerator;
+    private NumberIdGenerator idGenerator;
 
     private static final String TRACE_ID_TAB="trace_id";
 
