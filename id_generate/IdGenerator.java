@@ -38,7 +38,7 @@ public class IdGenerator {
 				return id;
 			}
 		}
-		throw new RuntimeException("Can not generate id!");
+		throw new RuntimeException("Can not generate log_select!");
 	}
 
 	Long innerNext(String tab, long shardId) {

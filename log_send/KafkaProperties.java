@@ -1,14 +1,7 @@
-package nju.edu.cn.log.log_tracking.send_log;
+package nju.edu.cn.log.log_tracking.log_send;
 
 
-import kafka.javaapi.producer.Producer;
-import kafka.producer.ProducerConfig;
 import kafka.serializer.StringEncoder;
-import nju.edu.cn.log.log_tracking.log_collect.AccessLogVO;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.stereotype.Component;
 
 import java.util.Properties;
 

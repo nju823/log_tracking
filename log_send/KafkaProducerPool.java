@@ -1,4 +1,4 @@
-package nju.edu.cn.log.log_tracking.send_log;
+package nju.edu.cn.log.log_tracking.log_send;
 
 import kafka.javaapi.producer.Producer;
 import kafka.producer.KeyedMessage;
@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 
-import static nju.edu.cn.log.log_tracking.send_log.KafkaProperties.buildProperty;
+import static nju.edu.cn.log.log_tracking.log_send.KafkaProperties.buildProperty;
 
 /**
  * kafka线程池

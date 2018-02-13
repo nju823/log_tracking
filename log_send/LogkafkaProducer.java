@@ -1,10 +1,9 @@
-package nju.edu.cn.log.log_tracking.send_log;
+package nju.edu.cn.log.log_tracking.log_send;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 import com.alibaba.fastjson.JSONObject;
-import kafka.javaapi.producer.Producer;
 import kafka.producer.KeyedMessage;
 import nju.edu.cn.log.log_tracking.log_collect.AccessLogVO;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -24,7 +24,7 @@ public class NumberIdGenerator {
                 return id;
             }
         }
-        throw new RuntimeException("Can not generate id!");
+        throw new RuntimeException("Can not generate log_select!");
     }
 
 }

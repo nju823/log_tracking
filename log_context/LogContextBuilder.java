@@ -33,6 +33,9 @@ public class LogContextBuilder {
         Long spanId=getValue(request.getHeader(SPAN_ID_HEADER_KEY));
         Long parentSapnId=getValue(request.getHeader(LogContext.PARENT_SPAN_ID_HEADER_KEY));
         context.init(traceId,spanId,parentSapnId,sysName);
+
+        String isLog=request.getHeader(LogContext.IS_LOG_KEY);
+        context.setLog("false".equals(isLog));
     }
 
     /**

@@ -17,6 +17,8 @@ public class LogContext {
 
     public static final String PARENT_SPAN_ID_HEADER_KEY="parentSpanId";
 
+    public static final String IS_LOG_KEY="isLog";
+
     public static final Long INVALID_PARENT_SPAN_ID=-1L;
 
     /**
@@ -45,12 +47,20 @@ public class LogContext {
         return INVALID_PARENT_SPAN_ID.equals(getParentSpanId());
     }
 
+    public boolean isLog(){
+        return context.get().getIsLog();
+    }
+
+    public void setLog(boolean isLog){
+        context.get().setIsLog(isLog);
+    }
+
     public boolean isException() {
-        return context.get().isException();
+        return context.get().getIsException();
     }
 
     public void setException(boolean exception) {
-        context.get().setException(exception);
+        context.get().setIsException(exception);
     }
 
     public Long getNextSpanId() {

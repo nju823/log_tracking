@@ -2,9 +2,10 @@ package nju.edu.cn.log.log_tracking.log_collect;
 
 import com.alibaba.fastjson.JSONObject;
 import nju.edu.cn.log.log_tracking.id_generate.IdGetter;
+import nju.edu.cn.log.log_tracking.log_select.LogSelector;
 import nju.edu.cn.log.log_tracking.log_context.LogContext;
-import nju.edu.cn.log.log_tracking.log_context.LogContextBuilder;
-import nju.edu.cn.log.log_tracking.send_log.LogkafkaProducer;
+import nju.edu.cn.log.log_tracking.log_select.LogTrack;
+import nju.edu.cn.log.log_tracking.log_send.LogkafkaProducer;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
@@ -12,7 +13,6 @@ import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
@@ -44,7 +44,6 @@ public class DatabaseLogAop {
 
     @Before("queryDatabase()")
     public void saveAccessRequestLog(JoinPoint joinPoint){
-
         MethodSignature signature=(MethodSignature) joinPoint.getSignature();
 
         String[] names=signature.getParameterNames();
@@ -53,18 +52,19 @@ public class DatabaseLogAop {
         for(int i=0;i<args.length;i++){
             jsonObject.put(names[i],args[i]);
         }
-
         String dao=signature.getDeclaringType().getSimpleName();
-
         logContext.setNextSpanId(idGetter.nextSpanId());
-        saveDataBaseLog(signature.getName(),jsonObject.toString(), AccessTypeEnum.DATABASE_REQUEST,dao);
+
+        LogTrack logAnnotation=signature.getMethod().getAnnotation(LogTrack.class);
+        saveDataBaseLog(signature.getName(),jsonObject.toString(), AccessTypeEnum.DATABASE_REQUEST,dao,logAnnotation);
     }
 
     @AfterReturning(value = "queryDatabase()",returning = "response")
     public void saveAccessResponseLog(JoinPoint joinPoint,Object response){
         MethodSignature signature=(MethodSignature) joinPoint.getSignature();
         String dao=signature.getDeclaringType().getSimpleName();
-        saveDataBaseLog(signature.getName(),JSONObject.toJSONString(response),AccessTypeEnum.DATABASE_RESPONSE,dao);
+        LogTrack logAnnotation=signature.getMethod().getAnnotation(LogTrack.class);
+        saveDataBaseLog(signature.getName(),JSONObject.toJSONString(response),AccessTypeEnum.DATABASE_RESPONSE,dao,logAnnotation);
     }
 
     /**
@@ -73,11 +73,13 @@ public class DatabaseLogAop {
      * @param content
      * @param type
      */
-    private void saveDataBaseLog(String serviceName,String content,AccessTypeEnum type,String dao){
+    private void saveDataBaseLog(String serviceName,String content,AccessTypeEnum type,String dao,LogTrack logAnnotation){
+        if(!logContext.isLog())
+            return;
         AccessLogVO accessLogVO=new AccessLogVO();
 
         accessLogVO.setType(type.getCode());
-        if(logSelector.logContent()){
+        if(logSelector.isLogContent(logAnnotation)){
             accessLogVO.setContent(content);
         }
         accessLogVO.setParentSpanId(logContext.getSpanId());

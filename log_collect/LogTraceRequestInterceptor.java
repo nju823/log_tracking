@@ -16,5 +16,6 @@ public class LogTraceRequestInterceptor implements RequestInterceptor {
         requestTemplate.header(LogContext.TRACE_ID_HEADER_KEY, logContext.getTraceId()+"");
         requestTemplate.header(LogContext.PARENT_SPAN_ID_HEADER_KEY,logContext.getSpanId()+"");
         requestTemplate.header(LogContext.SPAN_ID_HEADER_KEY,logContext.getNextSpanId()+"");
+        requestTemplate.header(LogContext.IS_LOG_KEY,logContext.isLog()+"");
     }
 }

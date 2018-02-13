@@ -1,10 +1,10 @@
 package nju.edu.cn.log.log_tracking.log_collect;
 
 import com.alibaba.fastjson.JSONObject;
-import com.netflix.discovery.converters.Auto;
 import nju.edu.cn.log.log_tracking.id_generate.IdGetter;
-import nju.edu.cn.log.log_tracking.send_log.LogkafkaProducer;
-import nju.edu.cn.log.log_tracking.zookeeper.IdGenerator;
+import nju.edu.cn.log.log_tracking.log_select.LogSelector;
+import nju.edu.cn.log.log_tracking.log_select.LogTrack;
+import nju.edu.cn.log.log_tracking.log_send.LogkafkaProducer;
 import nju.edu.cn.log.log_tracking.log_context.LogContext;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.*;
@@ -73,21 +73,26 @@ public class FeignAop{
         Long spanId= idGetter.nextSpanId();
         logContext.setNextSpanId(spanId);
 
-        saveLog(accessLogVO,jsonObject.toString(),AccessTypeEnum.HTTP_REQUEST);
+        LogTrack logAnnotation=signature.getMethod().getAnnotation(LogTrack.class);
+        saveLog(accessLogVO,jsonObject.toString(),AccessTypeEnum.HTTP_REQUEST,logAnnotation);
     }
 
     @AfterReturning(value="feignRequest()",returning = "response")
     public void saveResponseLog(JoinPoint joinPoint,Object response){
         AccessLogVO logVO=new AccessLogVO();
-        saveLog(logVO,JSONObject.toJSONString(response),AccessTypeEnum.HTTP_RESPONSE);
+        MethodSignature signature=(MethodSignature) joinPoint.getSignature();
+        LogTrack logAnnotation=signature.getMethod().getAnnotation(LogTrack.class);
+        saveLog(logVO,JSONObject.toJSONString(response),AccessTypeEnum.HTTP_RESPONSE,logAnnotation);
     }
 
-    private void saveLog(AccessLogVO accessLogVO,String content,AccessTypeEnum accessType){
+    private void saveLog(AccessLogVO accessLogVO,String content,AccessTypeEnum accessType,LogTrack logAnnotation){
+        if(!logContext.isLog())
+            return;
         accessLogVO.setType(accessType.getCode());
         accessLogVO.setSpanId(logContext.getNextSpanId());
         accessLogVO.setParentSpanId(logContext.getSpanId());
         accessLogVO.setTraceId(logContext.getTraceId());
-        if(logSelector.logContent()){
+        if(logSelector.isLogContent(logAnnotation)){
             accessLogVO.setContent(content);
         }
         logSender.send(accessLogVO);

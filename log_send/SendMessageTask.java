@@ -1,9 +1,6 @@
-package nju.edu.cn.log.log_tracking.send_log;
+package nju.edu.cn.log.log_tracking.log_send;
 
-import kafka.javaapi.producer.Producer;
 import kafka.producer.KeyedMessage;
-import kafka.producer.ProducerPool;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * 发送消息的任务

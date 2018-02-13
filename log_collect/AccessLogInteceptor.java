@@ -1,11 +1,11 @@
 package nju.edu.cn.log.log_tracking.log_collect;
 
-import com.alibaba.fastjson.JSONObject;
 import nju.edu.cn.log.log_tracking.http_wrapper.WrapperResponse;
-import nju.edu.cn.log.log_tracking.id_generate.IdGetter;
+import nju.edu.cn.log.log_tracking.log_select.LogSelector;
 import nju.edu.cn.log.log_tracking.log_context.LogContext;
 import nju.edu.cn.log.log_tracking.log_context.LogContextBuilder;
-import nju.edu.cn.log.log_tracking.send_log.LogkafkaProducer;
+import nju.edu.cn.log.log_tracking.log_select.LogTrack;
+import nju.edu.cn.log.log_tracking.log_send.LogkafkaProducer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -18,7 +18,6 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
@@ -51,23 +50,30 @@ public class AccessLogInteceptor implements HandlerInterceptor{
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object o) throws Exception {
 
-        if(StringUtils.isEmpty(request.getHeader(LogContext.TRACE_ID_HEADER_KEY))){
-            builder.buildWithoutHeader(request,logContext);
-            HandlerMethod handlerMethod=(HandlerMethod)o;
-
-            AccessLogVO accessLogVO=new AccessLogVO();
-            accessLogVO.setType(AccessTypeEnum.HTTP_REQUEST.getCode());
-            accessLogVO.setServiceUrl(request.getRequestURL().toString());
-            accessLogVO.setServiceName(buildServiceName(getServicePath(handlerMethod)));
-            if(logSelector.logContent()){
-                accessLogVO.setContent(readRequestBody(request));
-            }
-            accessLogVO.setTarget(logContext.getSysName());
-            saveLog(accessLogVO);
-        }else{
+        if(!StringUtils.isEmpty(request.getHeader(LogContext.TRACE_ID_HEADER_KEY))){//不是第一次调用，不记录日志
             builder.buildWithHeader(request,logContext);
+            return true;
         }
 
+        HandlerMethod handlerMethod=(HandlerMethod)o;
+        Method method=handlerMethod.getMethod();
+        LogTrack logAnnotation=method.getAnnotation(LogTrack.class);
+
+        builder.buildWithoutHeader(request,logContext);
+        if(!logSelector.isLog(logAnnotation)){//选择不记录日志
+            logContext.setLog(false);
+            return true;
+        }
+
+        AccessLogVO accessLogVO=new AccessLogVO();
+        accessLogVO.setType(AccessTypeEnum.HTTP_REQUEST.getCode());
+        accessLogVO.setServiceUrl(request.getRequestURL().toString());
+        accessLogVO.setServiceName(buildServiceName(getServicePath(handlerMethod)));
+        if(logSelector.isLogContent(logAnnotation)){
+            accessLogVO.setContent(readRequestBody(request));
+        }
+        accessLogVO.setTarget(logContext.getSysName());
+        saveLog(accessLogVO);
         return true;
     }
 
@@ -80,12 +86,17 @@ public class AccessLogInteceptor implements HandlerInterceptor{
 
     @Override
     public void afterCompletion(HttpServletRequest httpServletRequest, HttpServletResponse response, Object o, Exception e) throws Exception {
+        HandlerMethod handlerMethod=(HandlerMethod)o;
+        Method method=handlerMethod.getMethod();
+        LogTrack logAnnotation=method.getAnnotation(LogTrack.class);
+
         String body=readResponseBody(response);
-        if(!logContext.isFirstRequest()||logContext.isException())
+        if(!logContext.isFirstRequest()||logContext.isException()||!logContext.isLog())
             return;
         AccessLogVO logVO=new AccessLogVO();
+
         logVO.setType(AccessTypeEnum.HTTP_RESPONSE.getCode());
-        if(logSelector.logContent()){
+        if(logSelector.isLogContent(logAnnotation)){
             logVO.setContent(body);
         }
         saveLog(logVO);

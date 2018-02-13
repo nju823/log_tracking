@@ -2,15 +2,11 @@ package nju.edu.cn.log.log_tracking.log_collect;
 
 import com.ts.dto.ResponseDto;
 import nju.edu.cn.log.log_tracking.log_context.LogContext;
-import nju.edu.cn.log.log_tracking.send_log.LogkafkaProducer;
+import nju.edu.cn.log.log_tracking.log_send.LogkafkaProducer;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import javax.servlet.http.HttpServletRequest;

@@ -38,6 +38,11 @@ public class TrackContextVO {
      */
     private boolean isException;
 
+    /**
+     * 是否记录日志
+     */
+    private boolean isLog=true;
+
     public TrackContextVO() {
     }
 
@@ -52,11 +57,19 @@ public class TrackContextVO {
         BeanUtils.copyProperties(copy,this);
     }
 
-    public boolean isException() {
+    public boolean getIsLog() {
+        return isLog;
+    }
+
+    public void setIsLog(boolean log) {
+        isLog = log;
+    }
+
+    public boolean getIsException() {
         return isException;
     }
 
-    public void setException(boolean exception) {
+    public void setIsException(boolean exception) {
         isException = exception;
     }
 
