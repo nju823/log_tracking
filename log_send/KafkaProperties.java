@@ -39,6 +39,9 @@ public class KafkaProperties {
 
         // 设置缓冲区大小，10mb
         props.put("send.buffer.bytes", "102400000");
+
+        //分区类
+        props.put("partitioner.class","nju.edu.cn.log.log_tracking.log_send.KafkaPartitioner");
         return props;
     }
 
