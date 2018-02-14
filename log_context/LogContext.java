@@ -24,7 +24,7 @@ public class LogContext {
     /**
      * 每次调用独有的上下文
      */
-    private static final ThreadLocal<TrackContextVO> context=new ThreadLocal<>();
+    private static final ThreadLocal<TrackContextVO> context=new InheritableThreadLocal<>();
 
     public void init(Long traceId,Long spanId,Long parentSpanId,String sysName){
         TrackContextVO contextVO=new TrackContextVO(traceId,spanId,parentSpanId,sysName);
